@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Instant Health Analysis</title>
+
+  <!-- Link your main CSS files -->
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="media.css" />
+
+  <!-- Optional: Google Fonts if used in index.html -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #e0f7fa, #f1f8e9);
+      color: #333;
+    }
+
+    .analysis-section {
+      max-width: 600px;
+      margin: 60px auto;
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .analysis-section h1 {
+      text-align: center;
+      margin-bottom: 24px;
+      color: #2196f3;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group select {
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .analyze-button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2196f3;
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .analyze-button:hover {
+      background-color: #2196f3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="analysis-section">
+    <h1>Instant Health Analysis</h1>
+
+   <div class="form-group">
+  <label for="age">Age:</label>
+  <input type="number" id="age" placeholder="Enter your age" />
+</div>
+
+<div class="form-group">
+  <label for="gender">Gender:</label>
+  <select id="gender">
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="symptoms">Symptoms:</label>
+  <input type="text" id="symptoms" placeholder="e.g., anxiety, headache" />
+</div>
+
+<div class="form-group">
+  <label for="stress">Work Stress Level:</label>
+  <select id="stress">
+    <option value="Low">Low</option>
+    <option value="Medium">Medium</option>
+    <option value="High">High</option>
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="sleep">Sleep (hours/night):</label>
+  <input type="number" id="sleep" placeholder="e.g., 6" />
+</div>
+
+<div class="form-group">
+  <label for="exercise">Exercise Frequency:</label>
+  <select id="exercise">
+    <option value="None">None</option>
+    <option value="Rarely">Rarely</option>
+    <option value="Often">Often</option>
+    <option value="Daily">Daily</option>
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="conditions">Existing Conditions:</label>
+  <input type="text" id="conditions" placeholder="e.g., diabetes, asthma" />
+</div>
+
+<div class="form-group">
+  <label for="medication">Currently on Medication?</label>
+  <select id="medication">
+    <option value="Yes">Yes</option>
+    <option value="No">No</option>
+  </select>
+</div>
+<div id="result-area" style="margin-top: 20px;"></div>
+
+
+<button class="analyze-button" onclick="runAnalysis()">Analyze</button>
+
+
+  <script>
+  async function runAnalysis() {
+  const inputData = {
+    age: document.getElementById('age').value,
+    gender: document.getElementById('gender').value,
+    symptoms: document.getElementById('symptoms').value,
+    stress: document.getElementById('stress').value,
+    sleep: document.getElementById('sleep').value,
+    exercise: document.getElementById('exercise').value,
+    conditions: document.getElementById('conditions').value,
+    medication: document.getElementById('medication').value,
+  };
+
+  if (!inputData.age || !inputData.symptoms || !inputData.sleep) {
+    alert("Please fill out all mandatory fields.");
+    return;
+  }
+try {
+      const response = await fetch("http://127.0.0.1:5001/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(inputData),
+      });
+
+      const result = await response.json();
+
+      // ✅ Display results on page
+      document.getElementById('result-area').innerHTML = `
+        <h3>🧠 Health Analysis Result:</h3>
+        <p><strong>Risk Score:</strong> ${result.risk_score}</p>
+        <p><strong>Suggestion:</strong> ${result.result}</p>
+      `;
+    } catch (error) {
+      console.error("Error calling ML server:", error);
+      alert("Error analyzing health. Please try again later.");
+    }
+  }
+  
+
+</script>
+
+</body>
+</html>
