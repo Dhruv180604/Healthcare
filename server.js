@@ -13,6 +13,10 @@ const PORT =  process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.send('✅ Healthcare Server is running!');
+});
+
 // POST endpoint to handle user chat
 app.post('/ask', async (req, res) => {
   const { messages } = req.body;
